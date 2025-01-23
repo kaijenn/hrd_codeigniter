@@ -201,6 +201,7 @@ public function register()
             'password' => $hashedPassword, 
             'email' => $email, 
             'nohp' => $nohp, 
+            'id_level' => 3, 
         );
 
         // Initialize the model
@@ -338,15 +339,13 @@ public function e_lowongan($id_lowongan)
     }
 
 
-
-    public function lamaran()
+    public function karyawan()
 	{
 		$model= new M_siapake();
 
        // Mengambil ID dari session
-$where = array('id_user' => session()->get('id'));
 
-$data['oke'] = $model->tampilwherepelamar('pelamar', $where);
+       $data['oke'] = $model->tampil_karyawan();
 // $data['oke'] = $model->tampil('pelamar');
 
 
@@ -355,15 +354,74 @@ $data['oke'] = $model->tampilwherepelamar('pelamar', $where);
         $id_user = session()->get('id');
     $activityLog = [
         'id_user' => $id_user,
-        'menu' => 'Masuk ke Lowongan',
+        'menu' => 'Masuk ke Karyawan',
         'time' => date('Y-m-d H:i:s')
     ];
     $model->logActivity($activityLog);
 	echo view('header', $data);
 	echo view('menu');
-    echo view('lamaran');
+    echo view('karyawan');
     echo view('footer');
 	}
+
+
+    public function aksi_e_karyawan()
+    {
+        if(session()->get('id') > 0) {
+            $gaji = $this->request->getPost('gaji');
+            $id = $this->request->getPost('id_karyawan');
+            // Hash the deskripsi using MD5
+            $where = array('id_karyawan' => $id);
+
+
+            $yoga = array(
+                'gaji' => $gaji,
+            );
+    
+            // Initialize the model
+            $model = new M_siapake;
+            $model->edit('karyawan', $yoga, $where);
+    
+            // Redirect to the 'tb_user' page
+            return redirect()->to('home/karyawan');
+        } else {
+            // If no session or user is logged in, redirect to the login page
+            return redirect()->to('home/login');
+        }
+    }
+
+
+    public function lamaran()
+{
+    $model = new M_siapake();
+    $id_user = session()->get('id');
+    $id_level = session()->get('level'); // Ambil id_level dari session
+
+    // Cek apakah user adalah admin (id_level 1)
+    if ($id_level == 1 || $id_level == 2) {
+        // Jika admin, ambil semua pelamar
+        $data['oke'] = $model->tampilpelamar('pelamar');
+    } else {
+        // Jika bukan admin, ambil pelamar milik user tersebut
+        $where = array('id_user' => $id_user);
+        $data['oke'] = $model->tampilwherepelamar('pelamar', $where);
+    }
+
+    $where = array('id_setting' => '1');
+    $data['yogi'] = $model->getWhere1('setting', $where)->getRow();
+
+    $activityLog = [
+        'id_user' => $id_user,
+        'menu' => 'Masuk ke Lowongan',
+        'time' => date('Y-m-d H:i:s')
+    ];
+    $model->logActivity($activityLog);
+
+    echo view('header', $data);
+    echo view('menu');
+    echo view('lamaran');
+    echo view('footer');
+}
 
 
 
@@ -526,17 +584,30 @@ public function kirim_pengumuman_diterima($id_lamaran)
         ['id_pelamar' => $id_lamaran]
     );
 
-    // 4. Kirim email dengan nama_pelamar
+    // 4. Update id_level user menjadi 4
+    $model->edit('user', 
+        ['id_level' => 4], 
+        ['id' => $pelamar->id_user]
+    );
+
+    // 5. Tambah data ke tabel karyawan
+    $data_karyawan = [
+        'id_pelamar' => $id_lamaran,
+        'id_user' => $pelamar->id_user
+    ];
+    $model->tambah('karyawan', $data_karyawan);
+
+    // 6. Kirim email dengan nama_pelamar
     $email_terkirim = $this->kirim_email_penerimaan($user->email, $pelamar->nama_pelamar);
 
-    // 5. Berikan respon
+    // 7. Berikan respon
     if ($email_terkirim) {
-        session()->setFlashdata('success', 'Email penerimaan berhasil dikirim');
+        session()->setFlashdata('success', 'Email penerimaan berhasil dikirim, status user diupdate, dan data karyawan ditambahkan');
     } else {
         session()->setFlashdata('error', 'Gagal mengirim email penerimaan');
     }
 
-    // 6. Redirect kembali
+    // 8. Redirect kembali
     return redirect()->back();
 }
 

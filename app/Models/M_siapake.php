@@ -64,6 +64,33 @@ public function tampilwherepelamar($table, $where) {
         ->where($where)
         ->get()->getResult();
 }
+public function tampilpelamar($yoga)
+{
+    return $this->db->table($yoga)
+        ->select('pelamar.*, lowongan.nama_lowongan') // Ambil semua kolom pelamar dan nama lowongan
+        ->join('lowongan', 'pelamar.id_lowongan = lowongan.id_lowongan')
+        ->get()
+        ->getResult();
+}
+
+
+public function tampil_karyawan()
+{
+    return $this->db->table('karyawan')
+        ->select('karyawan.*, pelamar.nama_pelamar, pelamar.id_lowongan, lowongan.nama_lowongan')
+        ->join('pelamar', 'karyawan.id_pelamar = pelamar.id_pelamar')
+        ->join('lowongan', 'pelamar.id_lowongan = lowongan.id_lowongan')
+        ->get()
+        ->getResult();
+}
+public function tampilByLevel($table, $levels)
+{
+    return $this->db->table($table)
+        ->where('id_level', $levels) // Filter berdasarkan id_level
+        ->get()
+        ->getResult();
+}
+
 
     public function edit($tabel, $isi, $where)
     {
