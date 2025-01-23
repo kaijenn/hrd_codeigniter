@@ -27,27 +27,6 @@
                             </a>
                         </li>
 
-
-                        <li class="sidebar-item has-sub <?= (in_array($currentUri, ['home/modal_produksi', 'home/penjualan_produk', 'home/pengeluaran', 'home/laporan_keuangan'])) ? 'active' : '' ?>">
-                            <a href="#" class='sidebar-link'>
-                                <i class="bi bi-file-earmark-medical-fill"></i>
-                                <span>Surat</span>
-                            </a>
-                            <ul class="submenu">
-                                <li class="submenu-item <?= ($currentUri == 'home/surat_masuk') ? 'active' : '' ?>">
-                                    <a href="<?= base_url('home/surat_masuk') ?>">Surat Masuk</a>
-                                </li>
-                                <li class="submenu-item <?= ($currentUri == 'home/surat_keluar') ? 'active' : '' ?>">
-                                    <a href="<?= base_url('home/surat_keluar') ?>">Surat Keluar</a>
-                                </li>
-                                <li class="submenu-item <?= ($currentUri == 'home/surat_keterlambatan') ? 'active' : '' ?>">
-                                    <a href="<?= base_url('home/surat_keterlambatan') ?>">Keterlambatan</a>
-                                </li>
-                                <li class="submenu-item <?= ($currentUri == 'home/pengajuan_cuti') ? 'active' : '' ?>">
-                                    <a href="<?= base_url('home/pengajuan_cuti') ?>">Pengajuan Cuti</a>
-                                </li>
-                            </ul>
-                        </li>
                         <!-- Menu -->
                         <li class="sidebar-item <?= ($currentUri == 'home/lowongan') ? 'active' : '' ?>">
                             <a href="<?= base_url('home/lowongan') ?>" class='sidebar-link'>
@@ -59,6 +38,13 @@
                             <a href="<?= base_url('home/lamaran') ?>" class='sidebar-link'>
                                 <i class="fa fa-user"></i>
                                 <span>Lamaran</span>
+                            </a>
+                        </li>
+
+                        <li class="sidebar-item <?= ($currentUri == 'home/karyawan') ? 'active' : '' ?>">
+                            <a href="<?= base_url('home/karyawan') ?>" class='sidebar-link'>
+                                <i class="fa fa-user"></i>
+                                <span>Karyawan</span>
                             </a>
                         </li>
 

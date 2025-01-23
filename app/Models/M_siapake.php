@@ -244,7 +244,24 @@ public function saveToBackup($table, $data)
         return $this->db->table($table)->insert($data);
     }
 
+    public function get_pelamar_by_id($id_lamaran)
+    {
+        return $this->db->table('pelamar')
+            ->select('nama_pelamar, id_user') // Pastikan kolom sesuai
+            ->where('id_pelamar', $id_lamaran)
+            ->get()
+            ->getRow();
+    }
 
+    // Method untuk mengambil data user berdasarkan id_user
+    public function get_user_by_id($id_user)
+{
+    return $this->db->table('user')
+        ->select('email') // Pilih hanya kolom email
+        ->where('id_user', $id_user)
+        ->get()
+        ->getRow();
+}
 
 
 }

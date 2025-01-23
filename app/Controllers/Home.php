@@ -5,6 +5,7 @@ Use App\Models\M_siapake;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
+
 class Home extends BaseController
 {
 
@@ -509,32 +510,64 @@ public function e_lamaran($id_pelamar)
         return redirect()->to('home/login');
     }
 }
-
-public function update_status_lamaran()
+public function kirim_pengumuman_diterima($id_lamaran)
 {
-    $id_pelamar = $this->request->getPost('id_pelamar');
-    $status = $this->request->getPost('status');
+    $model = new M_siapake;
 
-    $model = new M_siapake();
-    
-    // Ambil data email pelamar
-    $result = $model->get_pelamar_email($id_pelamar);
+    // 1. Ambil data pelamar
+    $pelamar = $model->get_pelamar_by_id($id_lamaran);
 
-    if ($result) {
-        // Kirim email
-        $emailResult = $this->kirim_email_penerimaan($result->email, $result->nama_pelamar);
-        
-        return $this->response->setJSON([
-            'success' => true,
-            'message' => 'Email pengumuman terkirim',
-            'email' => $result->email
-        ]);
+    // 2. Ambil email dari user
+    $user = $model->get_user_by_id($pelamar->id_user);
+
+    // 3. Update status pelamar menjadi Diterima
+    $model->edit('pelamar', 
+        ['status' => 'Diterima'], 
+        ['id_pelamar' => $id_lamaran]
+    );
+
+    // 4. Kirim email dengan nama_pelamar
+    $email_terkirim = $this->kirim_email_penerimaan($user->email, $pelamar->nama_pelamar);
+
+    // 5. Berikan respon
+    if ($email_terkirim) {
+        session()->setFlashdata('success', 'Email penerimaan berhasil dikirim');
     } else {
-        return $this->response->setJSON([
-            'success' => false,
-            'message' => 'Data pelamar tidak ditemukan'
-        ]);
+        session()->setFlashdata('error', 'Gagal mengirim email penerimaan');
     }
+
+    // 6. Redirect kembali
+    return redirect()->back();
+}
+
+public function kirim_pengumuman_ditolak($id_lamaran)
+{
+
+
+$model = new M_siapake;
+
+$pelamar = $model->get_pelamar_by_id($id_lamaran);
+
+// Ambil email dari user
+$user = $model->get_user_by_id($pelamar->id_user);
+
+$model->edit('pelamar', 
+['status' => 'Ditolak'], 
+['id_pelamar' => $id_lamaran]
+);
+
+// Kirim email dengan nama_pelamar
+$email_terkirim = $this->kirim_email_penerimaan_ditolak($user->email, $pelamar->nama_pelamar);
+
+    // 4. Berikan respon
+    if ($email_terkirim) {
+        session()->setFlashdata('success', 'Email penerimaan berhasil dikirim');
+    } else {
+        session()->setFlashdata('error', 'Gagal mengirim email penerimaan');
+    }
+
+    // 5. Redirect kembali
+    return redirect()->back();
 }
 
 private function kirim_email_penerimaan($email, $nama)
@@ -563,6 +596,48 @@ private function kirim_email_penerimaan($email, $nama)
                 <p>Silakan menunggu informasi lebih lanjut untuk proses selanjutnya.</p>
                 <br>
                 <p>Salam hangat,<br>Tim Rekrutmen PT. Matcha Qiong</p>
+            </body>
+            </html>
+        ";
+
+        $mail->send();
+        return true;
+    } catch (\Exception $e) {
+        log_message('error', 'Gagal mengirim email: ' . $e->getMessage());
+        return false;
+    }
+}
+
+
+private function kirim_email_penerimaan_ditolak($email, $nama)
+{
+    $mail = new PHPMailer(true);
+
+    try {
+        $mail->isSMTP();
+        $mail->Host       = 'smtp.gmail.com';
+        $mail->SMTPAuth   = true;
+        $mail->Username   = 'kaizenesia@gmail.com';
+        $mail->Password   = 'kjmc gjkt bzuh qglc';
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port       = 587;
+
+        $mail->setFrom('kaizenesia@gmail.com', 'PT. Matcha Qiong');
+        $mail->addAddress($email, $nama);
+
+        $mail->isHTML(true);
+        $mail->Subject = 'Informasi Hasil Seleksi Lamaran di PT. Matcha Qiong';
+        $mail->Body    = "
+            <html>
+            <body>
+                <h2>Kepada Yth. $nama,</h2>
+                <p>Terima kasih atas minat Anda untuk bergabung dengan PT. Matcha Qiong.</p>
+                <p>Setelah melalui proses seleksi yang komprehensif, kami sampaikan bahwa saat ini lamaran Anda belum dapat kami terima.</p>
+                <p>Kami menghargai waktu dan usaha yang telah Anda berikan dalam proses lamaran ini.</p>
+                <br>
+                <p>Kami mendorong Anda untuk terus mengembangkan kemampuan dan tidak menyerah. Kesempatan lain mungkin akan datang di masa depan.</p>
+                <br>
+                <p>Terima kasih,<br>Tim Rekrutmen PT. Matcha Qiong</p>
             </body>
             </html>
         ";

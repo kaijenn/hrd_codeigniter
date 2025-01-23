@@ -66,14 +66,14 @@
         </button>
         <ul class="dropdown-menu" aria-labelledby="statusDropdown<?= $okei->id_pelamar ?>">
             <li>
-                <a class="dropdown-item text-success" href="#" onclick="updateStatus(<?= $okei->id_pelamar ?>, 'Diterima')">
-                    <i class="fe fe-check"></i> Diterima
-                </a>
+            <a class="dropdown-item text-info" href="<?= base_url('home/kirim_pengumuman_diterima/' . $okei->id_pelamar) ?>">
+    <i class="fe fe-check"></i> Diterima
+</a>
             </li>
             <li>
-                <a class="dropdown-item text-danger" href="#" onclick="updateStatus(<?= $okei->id_pelamar ?>, 'Ditolak')">
-                    <i class="fe fe-x"></i> Ditolak
-                </a>
+            <a class="dropdown-item text-secondary" href="<?= base_url('home/kirim_pengumuman_ditolak/' . $okei->id_pelamar) ?>">
+    <i class="fe fe-check"></i> Ditolak
+</a>
             </li>
         </ul>
     </div>
@@ -99,29 +99,6 @@
 <script>
     // Function to load "Tambah Jurusan" form dynamically
     
-
-    function updateStatus(id_pelamar, status) {
-    fetch('<?= base_url('home/update_status_lamaran') ?>', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: `id_pelamar=${id_pelamar}&status=${status}`
-    })
-    .then(response => response.json())
-    .then(data => {
-        alert(data.message);
-        location.reload();
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Terjadi kesalahan');
-    });
-}
-
-
-
-
 
 
     // Function to load "Edit Jurusan" form dynamically
