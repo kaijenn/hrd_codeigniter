@@ -266,6 +266,15 @@ public function tampilrestore($yoga)
         ->getResult();
 }
 
+public function tampil_user()
+{
+    return $this->db->table('user')
+        ->select('user.*, level.level')
+        ->join('level', 'user.id_level = level.id_level')
+        ->get()
+        ->getResult();
+}
+
 public function saveToBackup($table, $data)
     {
         return $this->db->table($table)->insert($data);

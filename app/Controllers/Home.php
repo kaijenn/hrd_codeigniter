@@ -220,7 +220,7 @@ public function lowongan()
 	{
 		$model= new M_siapake();
 
-        $data['oke'] = $model->tampil('lowongan');
+        $data['oke'] = $model->tampilActive('lowongan');
 		$where = array('id_setting' => '1');
 		$data['yogi'] = $model->getWhere1('setting', $where)->getRow();
         $id_user = session()->get('id');
@@ -236,6 +236,81 @@ public function lowongan()
     echo view('footer');
 	}
 
+    public function soft_delete(){
+
+        $model = new M_siapake;
+        $data['oke'] = $model->tampilrestore('lowongan');
+        $where = array('id_setting' => '1');
+        $data['yogi'] = $model->getWhere1('setting', $where)->getRow();
+        $id_user = session()->get('id');
+        $activityLog = [
+            'id_user' => $id_user,
+            'menu' => 'Masuk ke Soft Delete',
+            'time' => date('Y-m-d H:i:s')
+        ];
+        $model->logActivity($activityLog);
+        echo view('header', $data);
+        echo view('menu');
+        echo view('soft_delete', $data);
+        echo view('footer');
+    }
+
+    public function restore_edit(){
+
+        $model = new M_siapake;
+        $data['oke'] = $model->tampil('lowongan_backup');
+        $where = array('id_setting' => '1');
+        $data['yogi'] = $model->getWhere1('setting', $where)->getRow();
+        $id_user = session()->get('id');
+        $activityLog = [
+            'id_user' => $id_user,
+            'menu' => 'Masuk ke Restore Edit Lowongan',
+            'time' => date('Y-m-d H:i:s')
+        ];
+        $model->logActivity($activityLog);
+        echo view('header', $data);
+        echo view('menu');
+        echo view('restore_edit', $data);
+        echo view('footer');
+    }
+
+
+
+    public function hapus_lowongan($id)
+    {
+        $model = new M_siapake();
+        $where = array('id_lowongan' => $id);
+        $array = array(
+            'deleted_at' => date('Y-m-d H:i:s'),
+        );
+        $model->edit('lowongan', $array, $where);
+        // $this->loglowonganActivity('Menghapus Pemesanan');
+
+        return redirect()->to('home/lowongan');
+    }
+
+    public function hapus_lowongan_permanent($id)
+    {
+        $model = new M_siapake();
+        // $this->logUserActivity('Menghapus Pemesanan Permanent');
+        $where = array('id_lowongan' => $id);
+        $model->hapus('lowongan', $where);
+    
+        return redirect()->to('home/lowongan');
+    }
+
+
+    public function restore_lowongan($id)
+    {
+        $model = new M_siapake();
+        $where = array('id_lowongan' => $id);
+        $array = array(
+            'deleted_at' => NULL, // Mengatur deleted_at menjadi null
+        );
+        $model->edit('lowongan', $array, $where);
+    
+        return redirect()->to('home/lowongan');
+    }
 
     public function t_lowongan()
 	{
@@ -246,7 +321,7 @@ public function lowongan()
         $id_user = session()->get('id');
     $activityLog = [
         'id_user' => $id_user,
-        'menu' => 'Masuk ke Lowongan',
+        'menu' => 'Masuk ke Tambah Lowongan',
         'time' => date('Y-m-d H:i:s')
     ];
     $model->logActivity($activityLog);
@@ -291,7 +366,7 @@ public function e_lowongan($id_lowongan)
         $id_user = session()->get('id');
     $activityLog = [
         'id_user' => $id_user,
-        'menu' => 'Masuk ke Lowongan',
+        'menu' => 'Masuk ke Edit Lowongan',
         'time' => date('Y-m-d H:i:s')
     ];
     $model->logActivity($activityLog);
@@ -308,17 +383,40 @@ public function e_lowongan($id_lowongan)
             $deskripsi = $this->request->getPost('deskripsi');
             $id = $this->request->getPost('id_lowongan');
             // Hash the deskripsi using MD5
-            $where = array('id_lowongan' => $id);
-
-
-            $yoga = array(
-                'nama_lowongan' => $nama_lowongan,
-                'deskripsi' => $deskripsi, 
-            );
-    
-            // Initialize the model
             $model = new M_siapake;
-            $model->edit('lowongan', $yoga, $where);
+            $oldData = $model->getWhere('lowongan', ['id_lowongan' => $id]);
+        
+                // Simpan data lama ke tabel backup
+                if ($oldData) {
+                    $backupData = [
+                        'id_lowongan' => $oldData->id_lowongan,  // integer
+                        'nama_lowongan' => $oldData->nama_lowongan,     
+                        'deskripsi' => $oldData->deskripsi,    
+                        'backup_by' => $oldData->backup_by,         // integer
+                        'backup_at' => $oldData->backup_at,         // datetime
+                    ];
+        
+                    // Debug: cek hasil insert ke tabel backup
+                    if ($model->saveToBackup('lowongan_backup', $backupData)) {
+                        echo "Data backup berhasil disimpan!";
+                    } else {
+                        echo "Gagal menyimpan data ke backup.";
+                    }
+                } else {
+                    echo "Data lama tidak ditemukan.";
+                }
+        
+                // Data baru yang akan diupdate
+                $yoga = array(
+                   'nama_lowongan' => $nama_lowongan,
+                   'deskripsi' => $deskripsi,
+                        'updated_by' => session()->get('id'),
+                        'updated_at' => date('Y-m-d H:i:s'),
+                );
+        
+                // Update data di tabel pemesanan
+                $where = array('id_lowongan' => $id);
+                $model->edit('lowongan', $yoga, $where);
     
             // Redirect to the 'tb_user' page
             return redirect()->to('home/lowongan');
@@ -328,16 +426,28 @@ public function e_lowongan($id_lowongan)
         }
     }
 
-    public function hapus_lowongan($id)
+    public function aksi_restore_edit_lowongan($id)
     {
         $model = new M_siapake();
-        // $this->logUserActivity('Menghapus Pemesanan Permanent');
-        $where = array('id_lowongan' => $id);
-        $model->hapus('lowongan', $where);
+        
+        $backupData = $model->getWhere('lowongan_backup', ['id_lowongan' => $id]);
     
+        if ($backupData) {
+           
+            $restoreData = [
+                'nama_lowongan' => $backupData->nama_lowongan,
+                'deskripsi' => $backupData->deskripsi,
+               
+               
+                // tambahkan field lainnya sesuai dengan struktur tabel menu
+            ];
+            unset($restoreData['id_lowongan']);
+            $model->edit('lowongan', $restoreData, ['id_lowongan' => $id]);
+        }
+        
         return redirect()->to('home/lowongan');
     }
-
+   
 
     public function karyawan()
 	{
@@ -412,7 +522,7 @@ public function e_lowongan($id_lowongan)
 
     $activityLog = [
         'id_user' => $id_user,
-        'menu' => 'Masuk ke Lowongan',
+        'menu' => 'Masuk ke Lamaran',
         'time' => date('Y-m-d H:i:s')
     ];
     $model->logActivity($activityLog);
@@ -720,6 +830,153 @@ private function kirim_email_penerimaan_ditolak($email, $nama)
         return false;
     }
 }
+
+
+public function user()
+	{
+		$model= new M_siapake();
+  
+        $data['oke'] = $model->tampil_user();
+        
+		$where = array('id_setting' => '1');
+		$data['yogi'] = $model->getWhere1('setting', $where)->getRow();
+        $id_user = session()->get('id');
+    $activityLog = [
+        'id_user' => $id_user,
+        'menu' => 'Masuk ke User',
+        'time' => date('Y-m-d H:i:s')
+    ];
+    $model->logActivity($activityLog);
+	echo view('header', $data);
+    echo view('menu');
+    echo view('user');
+    echo view('footer');
+	}
+
+
+    
+
+    public function hapus_user($id)
+    {
+        $model = new M_siapake();
+        // $this->logUserActivity('Menghapus Pemesanan Permanent');
+        $where = array('id_user' => $id);
+        $model->hapus('user', $where);
+    
+        return redirect()->to('Home/user');
+    }
+
+
+   
+    
+
+    public function t_user()
+	{
+		$model= new M_siapake();
+  
+        $data['yoga'] = $model->tampil('level');
+		$where = array('id_setting' => '1');
+		$data['yogi'] = $model->getWhere1('setting', $where)->getRow();
+        $id_user = session()->get('id');
+    $activityLog = [
+        'id_user' => $id_user,
+        'menu' => 'Masuk ke Tambah User',
+        'time' => date('Y-m-d H:i:s')
+    ];
+    $model->logActivity($activityLog);
+	echo view('header', $data);
+    echo view('menu');
+    echo view('t_user');
+	}
+
+    public function aksi_t_user()
+{
+if(session()->get('id') > 0){
+    $username = $this->request->getPost('username');
+    $email = $this->request->getPost('email');
+    $nohp = $this->request->getPost('nohp');
+    $level = $this->request->getPost('level');
+
+    $password = md5('1');
+
+    // Menggunakan MD5 untuk hash password "sph"
+
+    $yoga = array(
+        'username' => $username,
+        'password' => $password,
+        'email' => $email,
+        'nohp' => $nohp,
+        'id_level' => $level,
+    );
+
+    $model = new M_siapake;
+
+    $model->tambah('user', $yoga); // Menyimpan data kelas ke database
+    return redirect()->to('home/user');
+} else {
+    return redirect()->to('home/login');
+}
+}
+
+public function e_user($id_user)
+{
+    $model = new M_siapake();
+
+    $whereuser = array('id_user' => $id_user);
+    $data['oke'] = $model->getWhere1('user', $whereuser)->getRow();
+    $data['yoga'] = $model->tampil('level');
+    // Tambahkan currentLevel dari data pengguna
+    $data['currentLevel'] = $data['oke']->level ?? ''; // Pastikan defaultnya kosong jika tidak ada data
+
+    $where = array('id_setting' => '1');
+    $data['yogi'] = $model->getWhere1('setting', $where)->getRow();
+
+    $id_user = session()->get('id');
+    $activityLog = [
+        'id_user' => $id_user,
+        'menu' => 'Masuk ke Edit User',
+        'time' => date('Y-m-d H:i:s'),
+    ];
+    $model->logActivity($activityLog);
+
+    echo view('header', $data);
+    echo view('menu');
+    echo view('e_user', $data); // Pastikan $data dikirim ke view
+}
+
+
+public function aksi_e_user()
+{
+    if(session()->get('id') > 0) {
+        $username = $this->request->getPost('username');
+        $nohp = $this->request->getPost('nohp');
+        $email = $this->request->getPost('email');
+        $level = $this->request->getPost('level');
+        $id = $this->request->getPost('id_user');
+        // Hash the deskripsi using MD5
+        $where = array('id_user' => $id);
+
+
+        $yoga = array(
+            'username' => $username,
+            'nohp' => $nohp,
+            'email' => $email,
+            'id_level' => $level,
+        );
+
+        // Initialize the model
+        $model = new M_siapake;
+        $model->edit('user', $yoga, $where);
+
+        // Redirect to the 'tb_user' page
+        return redirect()->to('home/user');
+    } else {
+        // If no session or user is logged in, redirect to the login page
+        return redirect()->to('home/login');
+    }
+}
+
+
 
 
 

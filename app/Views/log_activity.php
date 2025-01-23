@@ -17,7 +17,7 @@
             <?php endforeach; ?>
           </select>
         </div>
-        <button type="submit" class="btn btn-warning">Filter</button>
+        <button type="submit" class="btn btn-info">Filter</button>
       </form>
       
       <!-- Delete All Logs by Filtered User Form -->

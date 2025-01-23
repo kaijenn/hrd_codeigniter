@@ -21,68 +21,75 @@
 
                         <!-- Dashboard -->
                         <li class="sidebar-item <?= ($currentUri == 'home/dashboard') ? 'active' : '' ?>">
-                            <a href="<?= base_url('home/dashboard') ?>" class='sidebar-link'>
-                                <i class="bi bi-grid-fill"></i>
-                                <span>Dashboard</span>
-                            </a>
-                        </li>
+        <a href="<?= base_url('home/dashboard') ?>" class='sidebar-link'>
+            <i class="bi bi-speedometer2"></i>
+            <span>Dashboard</span>
+        </a>
+    </li>
 
-                        <!-- Menu -->
-                        <li class="sidebar-item <?= ($currentUri == 'home/lowongan') ? 'active' : '' ?>">
-                            <a href="<?= base_url('home/lowongan') ?>" class='sidebar-link'>
-                                <i class="fa fa-folder"></i>
-                                <span>Lowongan</span>
-                            </a>
-                        </li>
-                        <li class="sidebar-item <?= ($currentUri == 'home/lamaran') ? 'active' : '' ?>">
-                            <a href="<?= base_url('home/lamaran') ?>" class='sidebar-link'>
-                                <i class="fa fa-user"></i>
-                                <span>Lamaran</span>
-                            </a>
-                        </li>
+    <!-- Lowongan -->
+    <li class="sidebar-item <?= ($currentUri == 'home/lowongan') ? 'active' : '' ?>">
+        <a href="<?= base_url('home/lowongan') ?>" class='sidebar-link'>
+            <i class="bi bi-briefcase-fill"></i>
+            <span>Lowongan</span>
+        </a>
+    </li>
 
-                        <li class="sidebar-item <?= ($currentUri == 'home/karyawan') ? 'active' : '' ?>">
-                            <a href="<?= base_url('home/karyawan') ?>" class='sidebar-link'>
-                                <i class="fa fa-user"></i>
-                                <span>Karyawan</span>
-                            </a>
-                        </li>
+    <!-- Lamaran -->
+    <li class="sidebar-item <?= ($currentUri == 'home/lamaran') ? 'active' : '' ?>">
+        <a href="<?= base_url('home/lamaran') ?>" class='sidebar-link'>
+            <i class="bi bi-file-earmark-text-fill"></i>
+            <span>Lamaran</span>
+        </a>
+    </li>
 
-                        <!-- Pemesanan -->
+    <!-- Karyawan -->
+    <li class="sidebar-item <?= ($currentUri == 'home/karyawan') ? 'active' : '' ?>">
+        <a href="<?= base_url('home/karyawan') ?>" class='sidebar-link'>
+            <i class="bi bi-people-fill"></i>
+            <span>Karyawan</span>
+        </a>
+    </li>
 
-                        <!-- Modal - Submenu with multiple items -->
 
-                        <!-- Settings -->
-                        <li class="sidebar-item <?= ($currentUri == 'home/setting') ? 'active' : '' ?>">
-                            <a href="<?= base_url('home/setting') ?>" class='sidebar-link'>
-                                <i class="bi bi-file-earmark-medical-fill"></i>
-                                <span>Settings</span>
-                            </a>
-                        </li>
+    <li class="sidebar-item <?= ($currentUri == 'home/user') ? 'active' : '' ?>">
+        <a href="<?= base_url('home/user') ?>" class='sidebar-link'>
+            <i class="bi bi-person-fill"></i>
+            <span>User</span>
+        </a>
+    </li>
 
-                        <!-- Soft Delete -->
-                        <li class="sidebar-item <?= ($currentUri == 'home/soft_delete') ? 'active' : '' ?>">
-                            <a href="<?= base_url('home/soft_delete') ?>" class='sidebar-link'>
-                                <i class="bi bi-file-earmark-medical-fill"></i>
-                                <span>Soft Delete</span>
-                            </a>
-                        </li>
+    <!-- Settings -->
+    <li class="sidebar-item <?= ($currentUri == 'home/setting') ? 'active' : '' ?>">
+        <a href="<?= base_url('home/setting') ?>" class='sidebar-link'>
+            <i class="bi bi-gear-fill"></i>
+            <span>Settings</span>
+        </a>
+    </li>
 
-                        <!-- Restore Edit -->
-                        <li class="sidebar-item <?= ($currentUri == 'home/restore_edit_user') ? 'active' : '' ?>">
-                            <a href="<?= base_url('home/restore_edit_user') ?>" class='sidebar-link'>
-                                <i class="bi bi-file-earmark-medical-fill"></i>
-                                <span>Restore Edit</span>
-                            </a>
-                        </li>
+    <!-- Soft Delete -->
+    <li class="sidebar-item <?= ($currentUri == 'home/soft_delete') ? 'active' : '' ?>">
+        <a href="<?= base_url('home/soft_delete') ?>" class='sidebar-link'>
+            <i class="bi bi-trash-fill"></i>
+            <span>Soft Delete</span>
+        </a>
+    </li>
 
-                        <!-- Log Activity -->
-                        <li class="sidebar-item <?= ($currentUri == 'home/log_activity') ? 'active' : '' ?>">
-                            <a href="<?= base_url('home/log_activity') ?>" class='sidebar-link'>
-                                <i class="bi bi-file-earmark-medical-fill"></i>
-                                <span>Log Activity</span>
-                            </a>
-                        </li>
+    <!-- Restore Edit -->
+    <li class="sidebar-item <?= ($currentUri == 'home/restore_edit') ? 'active' : '' ?>">
+        <a href="<?= base_url('home/restore_edit') ?>" class='sidebar-link'>
+            <i class="bi bi-arrow-repeat"></i>
+            <span>Restore Edit</span>
+        </a>
+    </li>
+
+    <!-- Log Activity -->
+    <li class="sidebar-item <?= ($currentUri == 'home/log_activity') ? 'active' : '' ?>">
+        <a href="<?= base_url('home/log_activity') ?>" class='sidebar-link'>
+            <i class="bi bi-clock-history"></i>
+            <span>Log Activity</span>
+        </a>
+    </li>
                     </ul>
                 </div>
             </div>

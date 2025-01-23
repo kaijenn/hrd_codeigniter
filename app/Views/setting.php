@@ -66,7 +66,7 @@
                             <input type="file" class="form-control" id="login" name="login" accept="image/*">
                         </div>
 
-                        <button type="submit" class="btn btn-warning btn-block">Save</button>
+                        <button type="submit" class="btn btn-info btn-block">Save</button>
                     </form>
                 </div>
             </div>
