@@ -43,7 +43,9 @@
         </a>
     </li>
 
-    <!-- Karyawan -->
+    <?php
+      if (session()->get('level') == 1 || session()->get('level') == 2){
+        ?>
     <li class="sidebar-item <?= ($currentUri == 'home/karyawan') ? 'active' : '' ?>">
         <a href="<?= base_url('home/karyawan') ?>" class='sidebar-link'>
             <i class="bi bi-people-fill"></i>
@@ -51,7 +53,15 @@
         </a>
     </li>
 
+    <?php 
+      } else {
 
+      }
+?>
+
+<?php
+      if (session()->get('level') == 1 ){
+        ?>
     <li class="sidebar-item <?= ($currentUri == 'home/user') ? 'active' : '' ?>">
         <a href="<?= base_url('home/user') ?>" class='sidebar-link'>
             <i class="bi bi-person-fill"></i>
@@ -90,6 +100,18 @@
             <span>Log Activity</span>
         </a>
     </li>
+    <?php 
+      } else {
+
+      }
+?>
+
+<li class="sidebar-item <?= ($currentUri == 'home/logout') ? 'active' : '' ?>">
+    <a href="<?= base_url('home/logout') ?>" class='sidebar-link'>
+        <i class="bi bi-box-arrow-right"></i>
+        <span>Logout</span>
+    </a>
+</li>
                     </ul>
                 </div>
             </div>

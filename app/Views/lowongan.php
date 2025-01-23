@@ -6,10 +6,17 @@
                     <h4 class="card-title" style="text-transform: uppercase; font-size: 30px;">LOWONGAN PT. MATCHA QIONG</h4>
                 </div>
 
-                <!-- Button to trigger "Tambah Lowongan" form -->
+                <?php
+      if (session()->get('level') == 1 || session()->get('level') == 2){
+        ?>
                 <button class="btn btn-primary m-3" id="btnTambahLowongan" onclick="loadTambahLowonganForm()">
                     <i class="fe fe-plus"></i> ADD LOWONGAN
                 </button>
+                <?php 
+      } else {
+
+      }
+?>
 
                 <!-- Lowongan Cards Container -->
                 <div class="row px-3">
@@ -24,22 +31,31 @@
                                 <p class="card-text"><?= htmlspecialchars($okei->deskripsi) ?></p>
                                 <div class="d-flex justify-content-between">
                                 <div class="dropdown">
-                                        <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="actionDropdown<?= $okei->id_lowongan ?>" data-bs-toggle="dropdown" aria-expanded="false">
-                                            Actions
-                                        </button>
-                                        <ul class="dropdown-menu" aria-labelledby="actionDropdown<?= $okei->id_lowongan ?>">
-                                            <li>
-                                                <a class="dropdown-item" href="#" onclick="loadEditLowonganForm(<?= $okei->id_lowongan ?>)">
-                                                    <i class="fe fe-edit"></i> Edit
-                                                </a>
-                                            </li>
-                                            <li>
-                                            <a class="dropdown-item text-danger" href="<?= base_url('home/hapus_lowongan/' . $okei->id_lowongan) ?>">
-    <i class="fe fe-trash"></i> Delete
-</a>
-                                            </li>
-                                        </ul>
-                                    </div>
+    <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="actionDropdown<?= $okei->id_lowongan ?>" data-bs-toggle="dropdown" aria-expanded="false">
+        Actions
+    </button>
+    <ul class="dropdown-menu" aria-labelledby="actionDropdown<?= $okei->id_lowongan ?>">
+        <?php
+        if (session()->get('level') == 1 || session()->get('level') == 2) {
+        ?>
+            <li>
+                <a class="dropdown-item" href="#" onclick="loadEditLowonganForm(<?= $okei->id_lowongan ?>)">
+                    <i class="fe fe-edit"></i> Edit
+                </a>
+            </li>
+            <li>
+                <a class="dropdown-item text-danger" href="<?= base_url('home/hapus_lowongan/' . $okei->id_lowongan) ?>">
+                    <i class="fe fe-trash"></i> Delete
+                </a>
+            </li>
+        <?php 
+        } else {
+            // Tampilkan pesan atau kosongkan
+            echo '<li><a class="dropdown-item disabled">Akses Terbatas</a></li>';
+        }
+        ?>
+    </ul>
+</div>
 
                                     <button class="btn btn-info btn-sm btn-delete" data-id="<?= $okei->id_lowongan ?>" data-bs-toggle="modal" data-bs-target="#lamaranModal" 
         onclick="document.getElementById('id_lowongan').value='<?= $okei->id_lowongan ?>'">

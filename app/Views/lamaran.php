@@ -59,7 +59,9 @@
     <button class="btn btn-info" onclick="loadEditLamaranForm(<?= $okei->id_pelamar ?>)">
         <i class="fe fe-edit"></i> Edit
     </button>
-    
+    <?php
+      if (session()->get('level') == 1 || session()->get('level') == 2){
+        ?>
     <div class="dropdown d-inline-block">
         <button class="btn btn-secondary dropdown-toggle" type="button" id="statusDropdown<?= $okei->id_pelamar ?>" data-bs-toggle="dropdown" aria-expanded="false">
             Status
@@ -77,6 +79,12 @@
             </li>
         </ul>
     </div>
+
+    <?php 
+      } else {
+
+      }
+?>
     
     <button class="btn btn-secondary btn-delete" data-id="<?= $okei->id_pelamar?>">Delete</button>
 </td>

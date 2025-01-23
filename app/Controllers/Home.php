@@ -32,6 +32,14 @@ class Home extends BaseController
     echo view('dashboard', $data);
     echo view('footer');
 }
+
+public function logout()
+
+    {
+        session()->destroy();
+        return redirect()->to('home/login');
+    }
+
 	public function login()
 	{
 		$model= new M_siapake();
@@ -187,7 +195,6 @@ public function register()
 
 	public function aksi_t_register()
 {
-    if(session()->get('id') > 0) {
         $username = $this->request->getPost('username');
         $password = $this->request->getPost('password');
         $email = $this->request->getPost('email');
@@ -210,10 +217,7 @@ public function register()
 
         // Redirect to the 'tb_user' page
         return redirect()->to('home/login');
-    } else {
-        // If no session or user is logged in, redirect to the login page
-        return redirect()->to('home/login');
-    }
+    
 }
 
 public function lowongan()
